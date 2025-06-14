@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/password_field.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -13,39 +14,48 @@ class Login extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                ),
-                style: TextStyle(color: const Color(0xFFE0ECEC)), // Input text color
-              ),
+              Spacer(),
+              TextField(decoration: InputDecoration(labelText: 'Username')),
+
+              SizedBox(height: 10),
+
+              //TextField(decoration: InputDecoration(labelText: 'Password'), obscureText: true),
+              PasswordField(label: "Password",),
+
               SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  //floatingLabelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-                obscureText: true,
-                style: TextStyle(color: const Color(0xFFE0ECEC)), // Input text color
-              ),
-              SizedBox(height: 20),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
 
                   },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 36), // Set minimumSize to occupy full width
-                  ),
+                  style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 36)),
                   child: Text('Log in'),
                 ),
               ),
-              SizedBox(),
-              TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/signup'),
-                child: Text('No account? Sign up'),
+
+              SizedBox(height: 20),
+
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/forgot_password'),
+                child: Text('Forgotten password?', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
+
+              Spacer(),
+
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('No account? ', style: TextStyle(color: Colors.white)),
+                  SizedBox(width: 5),
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, '/signup'),
+                    child: Text('Sign up', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600)),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15,)
             ],
           ),
         ),

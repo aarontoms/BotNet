@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutterprojects/theme/theme.dart';
+import 'package:botnet/theme/theme.dart';
 import 'screens/login.dart';
 import 'screens/signup.dart';
+import 'screens/forgot_password.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => Login(),
         '/signup': (context) => SignUp(),
+        '/forgot_password': (context) => Forgot(),
       },
       theme: AppTheme.themeData
     );
