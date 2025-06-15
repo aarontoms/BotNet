@@ -42,13 +42,7 @@ class _SignUpState extends State<SignUp> {
 
     } on DioException catch (e) {
       String msg = 'Unknown error';
-      if (e.response != null) {
-        msg = '${e.response?.data}';
-        print(e.response?.data);
-      } else {
-        msg = 'Network error. Try again later';
-        print(e.message);
-      }
+      e.response != null ? msg= e.response?.data : msg = "Network error. Try again later.";
 
       setState(() {
         _loading = false;
@@ -84,13 +78,14 @@ class _SignUpState extends State<SignUp> {
               ),
               SizedBox(height: 20),
               if (_loading)
-                const CircularProgressIndicator()
+                CircularProgressIndicator()
               else
                 ElevatedButton(
                   onPressed: _signUp,
-                  child: const Text('Sign Up'),
+                  style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 42)),
+                  child: Text('Sign Up'),
                 ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               if (_message != null)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
