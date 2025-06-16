@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import '../widgets/password_field.dart';
+import 'package:botnet/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final emailController = TextEditingController();
 final usernameController = TextEditingController();
@@ -27,7 +30,7 @@ class _SignUpState extends State<SignUp> {
 
     try {
       final response = await dio.post(
-        'https://99rkb3wb-3000.inc1.devtunnels.ms/signup',
+        'https://$backendUrl/signup',
         data: {
           'email': email,
           'username': username,
@@ -39,6 +42,13 @@ class _SignUpState extends State<SignUp> {
         _loading = false;
         _message = 'Signup successful';
       });
+
+      final accessToken = response.data['accessToken'];
+      final refreshToken = response.data['refreshToken'];
+      final sharedPreferences = await SharedPreferences.getInstance();
+      final secureStorage = FlutterSecureStorage();
+      await sharedPreferences.setString('access_token', accessToken);
+      await secureStorage.write(key: 'refresh_token', value: refreshToken);
 
     } on DioException catch (e) {
       String msg = 'Unknown error';

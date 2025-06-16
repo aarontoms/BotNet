@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:botnet/theme/theme.dart';
+import 'dio_interceptor.dart';
+
 import 'screens/login.dart';
 import 'screens/signup.dart';
 import 'screens/forgot_password.dart';
+import 'screens/home.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setupDio();
   runApp(MyApp());
 }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -17,10 +24,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'BotNet',
       initialRoute: '/',
+      navigatorKey: navigatorKey,
       routes: {
-        '/': (context) => Login(),
+        '/': (context) => Home(),
         '/signup': (context) => SignUp(),
         '/forgot_password': (context) => Forgot(),
+        '/home': (context) => Home(),
       },
       theme: AppTheme.themeData
     );

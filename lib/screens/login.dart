@@ -3,6 +3,7 @@ import '../widgets/password_field.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:botnet/constants.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -27,7 +28,7 @@ class _LoginState extends State<Login> {
 
     try {
       final response = await dio.post(
-        'https://99rkb3wb-3000.inc1.devtunnels.ms/login',
+        'https://$backendUrl/login',
         data: {
           'username': username,
           'password': password,
@@ -40,12 +41,15 @@ class _LoginState extends State<Login> {
       });
       final accessToken = response.data['accessToken'];
       final refreshToken = response.data['refreshToken'];
-      print("Access Token: $accessToken\nRefresh token: $refreshToken");
 
       final sharedPreferences = await SharedPreferences.getInstance();
       final secureStorage = FlutterSecureStorage();
       await sharedPreferences.setString('access_token', accessToken);
       await secureStorage.write(key: 'refresh_token', value: refreshToken);
+      // final acc = sharedPreferences.getString('access_token');
+      // final ref = await secureStorage.read(key: 'refresh_token');
+
+      Navigator.pushReplacementNamed(context, '/home');
 
     } on DioException catch (e) {
       String msg = 'Unknown error';
@@ -55,6 +59,10 @@ class _LoginState extends State<Login> {
       setState(() {
         _loading = false;
         _message = msg;
+        passwordController.clear();
+        if (msg.contains("Username")) {
+          usernameController.clear();
+        }
       });
     }
   }
