@@ -77,14 +77,18 @@ class _SignUpState extends State<SignUp> {
                 controller: passwordController,
               ),
               SizedBox(height: 20),
-              if (_loading)
-                CircularProgressIndicator()
-              else
-                ElevatedButton(
-                  onPressed: _signUp,
-                  style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 42)),
-                  child: Text('Sign Up'),
-                ),
+
+              SizedBox(
+                height:42,
+                child: _loading ?
+                  Center(child: CircularProgressIndicator()) :
+                  ElevatedButton(
+                    onPressed: _signUp,
+                    style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 42)),
+                    child: Text('Sign Up'),
+                  ),
+              ),
+
               SizedBox(height: 10),
               if (_message != null)
                 Padding(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/password_field.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -36,10 +38,19 @@ class _LoginState extends State<Login> {
         _loading = false;
         _message = 'Login successful';
       });
+      final accessToken = response.data['accessToken'];
+      final refreshToken = response.data['refreshToken'];
+      print("Access Token: $accessToken\nRefresh token: $refreshToken");
+
+      final sharedPreferences = await SharedPreferences.getInstance();
+      final secureStorage = FlutterSecureStorage();
+      await sharedPreferences.setString('access_token', accessToken);
+      await secureStorage.write(key: 'refresh_token', value: refreshToken);
 
     } on DioException catch (e) {
       String msg = 'Unknown error';
       e.response != null ? msg= e.response?.data : msg = "Network error. Try again later.";
+      print(e.response);
 
       setState(() {
         _loading = false;
@@ -87,10 +98,14 @@ class _LoginState extends State<Login> {
 
               SizedBox(height: 20),
 
-              if (_message != null) ...[
-                Text(_message!, style: TextStyle(color: Colors.red, fontSize: 16)),
-                SizedBox(height: 20),
-              ],
+              if (_message != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    _message!,
+                    style: TextStyle(color: _message!.contains('successful') ? Colors.green : Colors.red),
+                  ),
+                ),
 
               GestureDetector(
                 onTap: () => Navigator.pushNamed(context, '/forgot_password'),
