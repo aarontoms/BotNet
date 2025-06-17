@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import '../widgets/password_field.dart';
+import 'package:botnet/widgets/password_field.dart';
 import 'package:botnet/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -45,10 +45,19 @@ class _SignUpState extends State<SignUp> {
 
       final accessToken = response.data['accessToken'];
       final refreshToken = response.data['refreshToken'];
+      final userDetails = response.data['userDetails'];
+
       final sharedPreferences = await SharedPreferences.getInstance();
       final secureStorage = FlutterSecureStorage();
       await sharedPreferences.setString('access_token', accessToken);
       await secureStorage.write(key: 'refresh_token', value: refreshToken);
+      await sharedPreferences.setString('username', userDetails['username']);
+      await sharedPreferences.setString('email', userDetails['email']);
+      await sharedPreferences.setString('profilePicture', userDetails['profilePicture'] ?? '');
+      await sharedPreferences.setString('bio', userDetails['bio'] ?? '');
+      await sharedPreferences.setString('phoneNumber', userDetails['phoneNumber'] ?? '');
+
+      Navigator.pushReplacementNamed(context, '/home');
 
     } on DioException catch (e) {
       String msg = 'Unknown error';

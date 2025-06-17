@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:botnet/widgets/bottomBar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget{
   const Profile({super.key});
@@ -8,39 +10,33 @@ class Profile extends StatefulWidget{
 }
 
 class _ProfileState extends State<Profile>{
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadUsername();
+  }
+
+  Future<void> loadUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username') ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(username),
+        automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: const Center(
         child: Text('Profile Page'),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        currentIndex: 2,
-        onTap: (index) {
-          Navigator.pushNamedAndRemoveUntil(context,'/home', (Route<dynamic> route) => false,  // This removes all routes in the stack
-          );
-          switch (index) {
-            case 0:
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/search');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
-        },
-      ),
+      bottomNavigationBar: CustomBottomNavBar(currentIndex: 2),
     );
   }
 }

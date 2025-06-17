@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/password_field.dart';
+import 'package:botnet/widgets/password_field.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -27,8 +27,9 @@ class _LoginState extends State<Login> {
     setState(() => _loading = true);
 
     try {
+      print("here");
       final response = await dio.post(
-        'https://$backendUrl/login',
+        '$backendUrl/login',
         data: {
           'username': username,
           'password': password,
@@ -39,13 +40,20 @@ class _LoginState extends State<Login> {
         _loading = false;
         _message = 'Login successful';
       });
+      print("hello: ${response.data}");
       final accessToken = response.data['accessToken'];
       final refreshToken = response.data['refreshToken'];
+      final userDetails = response.data['userDetails'];
 
       final sharedPreferences = await SharedPreferences.getInstance();
       final secureStorage = FlutterSecureStorage();
       await sharedPreferences.setString('access_token', accessToken);
       await secureStorage.write(key: 'refresh_token', value: refreshToken);
+      await sharedPreferences.setString('username', userDetails['username']);
+      await sharedPreferences.setString('email', userDetails['email']);
+      await sharedPreferences.setString('profilePicture', userDetails['profilePicture'] ?? '');
+      await sharedPreferences.setString('bio', userDetails['bio'] ?? '');
+      await sharedPreferences.setString('phoneNumber', userDetails['phoneNumber'] ?? '');
       // final acc = sharedPreferences.getString('access_token');
       // final ref = await secureStorage.read(key: 'refresh_token');
 
@@ -59,7 +67,7 @@ class _LoginState extends State<Login> {
       setState(() {
         _loading = false;
         _message = msg;
-        passwordController.clear();
+        // passwordController.clear();
         if (msg.contains("Username")) {
           usernameController.clear();
         }

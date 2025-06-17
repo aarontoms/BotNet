@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       navigatorKey: navigatorKey,
       routes: {
-        '/': (context) => Home(),
+        '/': (context) => Login(),
         '/signup': (context) => SignUp(),
         '/forgot_password': (context) => Forgot(),
         '/home': (context) => Home(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:botnet/widgets/bottomBar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatelessWidget {
@@ -8,10 +9,10 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: Padding(padding: const EdgeInsets.only(left: 10),
           child: Text('Botnet', style: GoogleFonts.dancingScript(fontSize: 42, fontWeight: FontWeight.w800,),),
         ),
+        automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: [
           IconButton(
@@ -33,28 +34,7 @@ class Home extends StatelessWidget {
       body: const Center(
         child: Text('(Feed)'),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        currentIndex: 0,
-        onTap: (index) {
-          Navigator.pushNamedAndRemoveUntil(context,'/home', (Route<dynamic> route) => false,  // This removes all routes in the stack
-          );
-          switch (index) {
-            case 0:
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/search');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
-        },
-      ),
+      bottomNavigationBar: CustomBottomNavBar(currentIndex: 0),
     );
   }
 }
