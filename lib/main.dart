@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:botnet/theme/theme.dart';
 import 'dio_interceptor.dart';
-
 import 'screens/login.dart';
 import 'screens/signup.dart';
 import 'screens/forgot_password.dart';
 import 'screens/home.dart';
+import 'screens/search.dart';
+import 'screens/profile.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,8 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignUp(),
         '/forgot_password': (context) => Forgot(),
         '/home': (context) => Home(),
+        '/search': (context) => Search(),
+        '/profile': (context) => Profile(),
       },
       theme: AppTheme.themeData
     );
