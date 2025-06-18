@@ -7,6 +7,7 @@ import 'screens/forgot_password.dart';
 import 'screens/home.dart';
 import 'screens/search.dart';
 import 'screens/profile.dart';
+import 'screens/settingsPage.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,12 +28,13 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       navigatorKey: navigatorKey,
       routes: {
-        '/': (context) => Login(),
+        '/': (context) => Home(),
         '/signup': (context) => SignUp(),
         '/forgot_password': (context) => Forgot(),
         '/home': (context) => Home(),
         '/search': (context) => Search(),
         '/profile': (context) => Profile(),
+        '/settings': (context) => SettingsPage(),
       },
       theme: AppTheme.themeData
     );

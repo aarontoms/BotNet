@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:botnet/widgets/password_field.dart';
@@ -51,11 +52,7 @@ class _SignUpState extends State<SignUp> {
       final secureStorage = FlutterSecureStorage();
       await sharedPreferences.setString('access_token', accessToken);
       await secureStorage.write(key: 'refresh_token', value: refreshToken);
-      await sharedPreferences.setString('username', userDetails['username']);
-      await sharedPreferences.setString('email', userDetails['email']);
-      await sharedPreferences.setString('profilePicture', userDetails['profilePicture'] ?? '');
-      await sharedPreferences.setString('bio', userDetails['bio'] ?? '');
-      await sharedPreferences.setString('phoneNumber', userDetails['phoneNumber'] ?? '');
+      await sharedPreferences.setString('userDetails', jsonEncode(userDetails));
 
       Navigator.pushReplacementNamed(context, '/home');
 

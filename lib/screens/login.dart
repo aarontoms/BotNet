@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:botnet/widgets/password_field.dart';
 import 'package:dio/dio.dart';
@@ -49,11 +50,7 @@ class _LoginState extends State<Login> {
       final secureStorage = FlutterSecureStorage();
       await sharedPreferences.setString('access_token', accessToken);
       await secureStorage.write(key: 'refresh_token', value: refreshToken);
-      await sharedPreferences.setString('username', userDetails['username']);
-      await sharedPreferences.setString('email', userDetails['email']);
-      await sharedPreferences.setString('profilePicture', userDetails['profilePicture'] ?? '');
-      await sharedPreferences.setString('bio', userDetails['bio'] ?? '');
-      await sharedPreferences.setString('phoneNumber', userDetails['phoneNumber'] ?? '');
+      await sharedPreferences.setString('userDetails', jsonEncode(userDetails));
       // final acc = sharedPreferences.getString('access_token');
       // final ref = await secureStorage.read(key: 'refresh_token');
 
