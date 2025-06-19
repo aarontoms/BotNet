@@ -3,6 +3,8 @@ import 'package:botnet/widgets/bottomBar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../constants.dart';
+import '../dio_interceptor.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -12,19 +14,37 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  String userDetails = '';
+  Map<String, dynamic> userDetails = {};
 
   @override
   void initState() {
     super.initState();
-    loadUserDetails();
+    loadUserDetailsFromSharedPref().then((_) => fetchUserDetails());
   }
 
-  Future<void> loadUserDetails() async {
+  Future<void> loadUserDetailsFromSharedPref() async {
     final prefs = await SharedPreferences.getInstance();
+    final loadedDetails = prefs.getString('userDetails');
+    if (loadedDetails != null) {
+      setState(() {
+        userDetails = jsonDecode(loadedDetails);
+      });
+    }
+  }
+
+  Future<void> fetchUserDetails() async {
+    final response = await dio.get('$backendUrl/refreshDetails');
+    final updatedDetails = response.data['userDetails'];
+
+    final prefs = await SharedPreferences.getInstance();
+    print('Type of updatedDetails: ${updatedDetails.runtimeType}');
+    await prefs.setString('userDetails', jsonEncode(updatedDetails));
+    print(response.data);
+
     setState(() {
-      userDetails = prefs.getString('userDetails') ?? '{}';
+      userDetails = updatedDetails;
     });
+
   }
 
   @override
@@ -33,7 +53,7 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         title: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Text(jsonDecode(userDetails)['username'] ?? '??username??'),
+          child: Text(userDetails['username'] ?? '??username??'),
         ),
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -64,10 +84,10 @@ class _ProfileState extends State<Profile> {
                       CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.grey.shade800,
-                        backgroundImage: jsonDecode(userDetails)['profilePicture'] == ''
+                        backgroundImage: userDetails['profilePicture'] == ''
                             ? null
-                            : NetworkImage(jsonDecode(userDetails)['profilePicture']),
-                        child: jsonDecode(userDetails)['profilePicture'] == ''
+                            : NetworkImage(userDetails['profilePicture']),
+                        child: userDetails['profilePicture'] == ''
                             ? const Icon(Icons.person, size: 100)
                             : null,
                       ),
@@ -78,7 +98,7 @@ class _ProfileState extends State<Profile> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              jsonDecode(userDetails)['fullName'] ??
+                              userDetails['fullName'] ??
                                   'Full Name',
                               style: const TextStyle(
                                 fontSize: 22,
@@ -96,7 +116,7 @@ class _ProfileState extends State<Profile> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${(jsonDecode(userDetails)['posts'] as List?)?.length ?? ''}',
+                                        '${(userDetails['posts'] as List?)?.length ?? ''}',
                                         style: TextStyle(fontSize: 18),
                                       ),
                                       Text('Posts'),
@@ -110,7 +130,7 @@ class _ProfileState extends State<Profile> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${(jsonDecode(userDetails)['followers'] as List?)?.length ?? ''}',
+                                        '${(userDetails['followers'] as List?)?.length ?? ''}',
                                         style: TextStyle(fontSize: 18),
                                       ),
                                       Text('Followers'),
@@ -124,7 +144,7 @@ class _ProfileState extends State<Profile> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${(jsonDecode(userDetails)['following'] as List?)?.length ?? ''}',
+                                        '${(userDetails['following'] as List?)?.length ?? ''}',
                                         style: TextStyle(fontSize: 18),
                                       ),
                                       Text('Following'),
@@ -142,12 +162,12 @@ class _ProfileState extends State<Profile> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
-                      jsonDecode(userDetails)['bio'] == ''
+                      userDetails['bio'] == ''
                           ? 'Bio goes here...'
-                          : jsonDecode(userDetails)['bio'],
+                          : userDetails['bio'],
                       style: TextStyle(
                         fontSize: 16,
-                        color: jsonDecode(userDetails)['bio'] == ''
+                        color: userDetails['bio'] == ''
                             ? Colors.grey
                             : Colors.white,
                       ),

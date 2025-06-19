@@ -11,7 +11,8 @@ Future<void> setupDio() async {
   dio.interceptors.clear();
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) async {
-      if (!['/login', '/signup'].contains(options.uri.path)) {
+      final path = options.uri.path;
+      if (!path.endsWith('/login') && !path.endsWith('/signup')) {
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('access_token');
         if (token != null) {
