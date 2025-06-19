@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:botnet/theme/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dio_interceptor.dart';
 import 'screens/login.dart';
 import 'screens/signup.dart';
@@ -8,35 +9,41 @@ import 'screens/home.dart';
 import 'screens/search.dart';
 import 'screens/profile.dart';
 import 'screens/settingsPage.dart';
+import 'screens/edit_profile.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setupDio();
-  runApp(MyApp());
+  await setupDio();
+  final prefs = await SharedPreferences.getInstance();
+  final accessToken = prefs.getString('access_token');
+
+  runApp(MyApp(initialRoute: accessToken != null ? '/home' : '/'));
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'BotNet',
-      initialRoute: '/',
+      initialRoute: initialRoute,
       navigatorKey: navigatorKey,
       routes: {
-        '/': (context) => Home(),
+        '/': (context) => Login(),
         '/signup': (context) => SignUp(),
         '/forgot_password': (context) => Forgot(),
         '/home': (context) => Home(),
         '/search': (context) => Search(),
         '/profile': (context) => Profile(),
         '/settings': (context) => SettingsPage(),
+        '/edit_profile': (context) => EditProfile(),
       },
-      theme: AppTheme.themeData
+      theme: AppTheme.themeData,
     );
   }
 }

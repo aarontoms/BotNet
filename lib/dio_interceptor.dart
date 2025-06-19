@@ -30,7 +30,7 @@ Future<void> setupDio() async {
         if (refreshToken != null) {
           try {
             final response = await dio.post(
-              'https://$backendUrl/refresh',
+              '$backendUrl/token-refresh',
               data: {'refreshToken': refreshToken},
             );
 

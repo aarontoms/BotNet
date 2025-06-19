@@ -31,7 +31,7 @@ class _SignUpState extends State<SignUp> {
 
     try {
       final response = await dio.post(
-        'https://$backendUrl/signup',
+        '$backendUrl/signup',
         data: {
           'email': email,
           'username': username,

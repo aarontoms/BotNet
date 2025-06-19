@@ -9,9 +9,9 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+      items: [
+        BottomNavigationBarItem(icon: Icon(currentIndex == 0 ? Icons.home : Icons.home_outlined), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(currentIndex == 0 ? Icons.search : Icons.search_outlined), label: 'Search'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
       ],
       onTap: (index) {
