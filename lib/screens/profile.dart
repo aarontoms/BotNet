@@ -81,15 +81,44 @@ class _ProfileState extends State<Profile> {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.grey.shade800,
-                        backgroundImage: userDetails['profilePicture'] == ''
-                            ? null
-                            : NetworkImage(userDetails['profilePicture']),
-                        child: userDetails['profilePicture'] == ''
-                            ? const Icon(Icons.person, size: 100)
-                            : null,
+                      Theme(
+                        data: Theme.of(context).copyWith(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                              Navigator.pushNamed(context, '/camera');
+                          },
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: Colors.grey.shade800,
+                                backgroundImage: userDetails['profilePicture'] == ''
+                                    ? null
+                                    : NetworkImage(userDetails['profilePicture']),
+                                child: userDetails['profilePicture'] == ''
+                                    ? const Icon(Icons.person, size: 100)
+                                    : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 4,
+                                child: CircleAvatar(
+                                  radius: 16,
+                                  backgroundColor: Colors.black,
+                                  child: CircleAvatar(
+                                    radius: 14,
+                                    backgroundColor: Colors.white,
+                                    child: const Icon(Icons.add, size: 18, color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 20),
 

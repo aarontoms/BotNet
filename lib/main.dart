@@ -10,6 +10,7 @@ import 'screens/search.dart';
 import 'screens/profile.dart';
 import 'screens/settingsPage.dart';
 import 'screens/edit_profile.dart';
+import 'screens/cameraPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => Profile(),
         '/settings': (context) => SettingsPage(),
         '/edit_profile': (context) => EditProfile(),
+        '/camera': (context) => CameraPage(),
       },
       theme: AppTheme.themeData,
     );
