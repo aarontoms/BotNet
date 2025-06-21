@@ -28,7 +28,6 @@ class _LoginState extends State<Login> {
     setState(() => _loading = true);
 
     try {
-      print("here");
       final response = await dio.post(
         '$backendUrl/login',
         data: {

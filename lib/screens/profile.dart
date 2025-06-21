@@ -214,8 +214,9 @@ class _ProfileState extends State<Profile> {
                       SizedBox(width: 8),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/edit_profile');
+                          onPressed: () async {
+                            await Navigator.pushNamed(context, '/edit_profile');
+                            loadUserDetailsFromSharedPref();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF323232),

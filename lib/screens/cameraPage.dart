@@ -36,15 +36,15 @@ class _CameraPageState extends State<CameraPage> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
-      File image = File(picked.path);
-      print('Picked from gallery: ${image.path}');
+      File galleryImage = File(picked.path);
+      Navigator.pop(context, galleryImage.path);
     }
   }
 
   Future<void> captureImage() async {
     if (controller == null || !controller!.value.isInitialized) return;
-    final file = await controller!.takePicture();
-    print('Captured image: ${file.path}');
+    final cameraImage = await controller!.takePicture();
+    Navigator.pop(context, cameraImage.path);
   }
 
   Future<void> uploadStoryImage(File imageFile) async {
