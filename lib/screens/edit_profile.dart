@@ -20,10 +20,13 @@ class _EditProfileState extends State<EditProfile> {
   late TextEditingController phoneController;
 
   File? updatedImage;
+  String? originalImageUrl;
 
+  bool imageChanged = false;
   bool nameChanged = false;
   bool bioChanged = false;
   bool phoneChanged = false;
+  bool isLoadingImage = false;
 
   Map<String, dynamic> userDetails = {};
 
@@ -124,11 +127,15 @@ class _EditProfileState extends State<EditProfile> {
                             leading: const Icon(Icons.photo_camera),
                             title: const Text('Take Photo'),
                             onTap: () async {
-                              final result = await Navigator.pushNamed(context, '/camera');
+                              final result = await Navigator.pushNamed(
+                                context,
+                                '/camera',
+                              );
                               if (result != null && result is String) {
                                 File image = File(result);
                                 setState(() {
                                   updatedImage = image;
+                                  imageChanged = true;
                                 });
                               }
                             },
@@ -139,11 +146,14 @@ class _EditProfileState extends State<EditProfile> {
                             onTap: () async {
                               Navigator.pop(context);
                               final picker = ImagePicker();
-                              final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+                              final pickedFile = await picker.pickImage(
+                                source: ImageSource.gallery,
+                              );
                               if (pickedFile != null) {
                                 File image = File(pickedFile.path);
                                 setState(() {
                                   updatedImage = image;
+                                  imageChanged = true;
                                 });
                               }
                             },
@@ -153,6 +163,10 @@ class _EditProfileState extends State<EditProfile> {
                             title: const Text('Remove Photo'),
                             onTap: () {
                               setState(() {
+                                originalImageUrl =
+                                    userDetails['profilePicture'];
+                                userDetails['profilePicture'] = '';
+                                imageChanged = true;
                                 updatedImage = null;
                               });
                               Navigator.pop(context);
@@ -173,10 +187,27 @@ class _EditProfileState extends State<EditProfile> {
                             : userDetails['profilePicture'] == ''
                             ? null
                             : NetworkImage(userDetails['profilePicture']),
-                        child: updatedImage == null && userDetails['profilePicture'] == ''
+                        child:
+                            updatedImage == null &&
+                                userDetails['profilePicture'] == ''
                             ? const Icon(Icons.person, size: 100)
                             : null,
                       ),
+                      if (isLoadingImage)
+                        Container(
+                          width: 100,
+                          // same as CircleAvatar diameter (radius * 2)
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       Positioned(
                         bottom: 0,
                         right: 4,
@@ -199,40 +230,85 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
             ),
-            if (updatedImage != null) ...[
+            if (imageChanged && !isLoadingImage) ...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(Colors.transparent),
+                      overlayColor: MaterialStateProperty.all(
+                        Colors.transparent,
+                      ),
                     ),
                     onPressed: () {
                       setState(() {
                         updatedImage = null;
+                        imageChanged = false;
+                        if (originalImageUrl != null) {
+                          userDetails['profilePicture'] = originalImageUrl!;
+                        }
                       });
                     },
                     child: const Text('Undo'),
                   ),
                   TextButton(
                     style: ButtonStyle(
-                      overlayColor: MaterialStateProperty.all(Colors.transparent),
+                      overlayColor: MaterialStateProperty.all(
+                        Colors.transparent,
+                      ),
                     ),
                     onPressed: () async {
-                      final formData = FormData.fromMap({
-                        'image': await MultipartFile.fromFile(updatedImage!.path, filename: updatedImage!.uri.pathSegments.last),
+                      setState(() {
+                        isLoadingImage = true;
                       });
-                      final response = await dio.post('$backendUrl/uploadProfilePicture', data: formData);
 
-                      if (response.statusCode == 200) {
-                        final prefs = await SharedPreferences.getInstance();
-                        final updated = response.data['userDetails'];
-                        await prefs.setString('userDetails', jsonEncode(updated));
-                        setState(() {
-                          userDetails = updated;
-                          updatedImage = null;
+                      if (updatedImage != null) {
+                        final formData = FormData.fromMap({
+                          'image': await MultipartFile.fromFile(
+                            updatedImage!.path,
+                            filename: updatedImage!.uri.pathSegments.last,
+                          ),
                         });
+                        final response = await dio.post(
+                          '$backendUrl/uploadProfilePicture',
+                          data: formData,
+                        );
+
+                        if (response.statusCode == 200) {
+                          final prefs = await SharedPreferences.getInstance();
+                          final updated = response.data['userDetails'];
+                          await prefs.setString(
+                            'userDetails',
+                            jsonEncode(updated),
+                          );
+                          setState(() {
+                            userDetails = updated;
+                            updatedImage = null;
+                            imageChanged = false;
+                          });
+                        }
+                      } else {
+                        final response = await dio.post(
+                          '$backendUrl/updateProfile',
+                          data: {'profilePicture': ''},
+                        );
+
+                        if (response.statusCode == 200) {
+                          final prefs = await SharedPreferences.getInstance();
+                          final updated = response.data['userDetails'];
+                          await prefs.setString(
+                            'userDetails',
+                            jsonEncode(updated),
+                          );
+                          setState(() {
+                            userDetails = updated;
+                            imageChanged = false;
+                          });
+                        }
                       }
+                      setState(() {
+                        isLoadingImage = false;
+                      });
                     },
                     child: const Text('Save'),
                   ),

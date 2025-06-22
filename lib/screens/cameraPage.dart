@@ -17,6 +17,7 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
   CameraController? controller;
   List<CameraDescription>? cameras;
+  int cameraIndex = 1;
 
   @override
   void initState() {
@@ -27,7 +28,7 @@ class _CameraPageState extends State<CameraPage> {
   Future<void> initCamera() async {
     await Permission.camera.request();
     cameras = await availableCameras();
-    controller = CameraController(cameras![1], ResolutionPreset.high);
+    controller = CameraController(cameras![cameraIndex], ResolutionPreset.high);
     await controller!.initialize();
     if (mounted) setState(() {});
   }
@@ -45,6 +46,16 @@ class _CameraPageState extends State<CameraPage> {
     if (controller == null || !controller!.value.isInitialized) return;
     final cameraImage = await controller!.takePicture();
     Navigator.pop(context, cameraImage.path);
+  }
+
+  void switchCamera() async {
+    if (cameras == null || cameras!.isEmpty) return;
+
+    cameraIndex = cameraIndex == 0 ? 1 : 0;
+    await controller?.dispose();
+    controller = CameraController(cameras![cameraIndex], ResolutionPreset.high);
+    await controller!.initialize();
+    if (mounted) setState(() {});
   }
 
   Future<void> uploadStoryImage(File imageFile) async {
@@ -111,7 +122,12 @@ class _CameraPageState extends State<CameraPage> {
                     ),
                   ),
                   const Spacer(),
-                  const Spacer(),
+                  IconButton(
+                    onPressed: switchCamera,
+                    icon: const Icon(Icons.flip_camera_android, color: Colors.white),
+                    iconSize: 36,
+                  ),
+                  const SizedBox(width: 20),
                 ],
               ),
             ),
