@@ -83,6 +83,13 @@ class _SearchState extends State<Search> {
                     ),
                     title: Text('@${user['username'] ?? ''}'),
                     subtitle: Text(user['fullName'] ?? ''),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/viewUser',
+                        arguments: user['username'],
+                      );
+                    },
                   );
                 },
               ),

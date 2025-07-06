@@ -11,6 +11,7 @@ import 'screens/profile.dart';
 import 'screens/settingsPage.dart';
 import 'screens/edit_profile.dart';
 import 'screens/cameraPage.dart';
+import 'screens/viewUserPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   final String initialRoute;
+
   const MyApp({super.key, required this.initialRoute});
 
   @override
@@ -44,6 +46,16 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => SettingsPage(),
         '/edit_profile': (context) => EditProfile(),
         '/camera': (context) => CameraPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/viewUser') {
+          final username = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (context) => ViewUserPage(username: username),
+          );
+        }
+
+        return null; // fallback to default
       },
       theme: AppTheme.themeData,
     );
