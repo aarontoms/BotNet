@@ -17,31 +17,42 @@ class ViewUserPage extends StatefulWidget {
 
 class _ViewUserPageState extends State<ViewUserPage> {
   Map<String, dynamic> userDetails = {};
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    // fetchUserDetails();
+    fetchUserDetails();
   }
 
   Future<void> fetchUserDetails() async {
-    final response = await dio.get('$backendUrl/getUserDetails/${widget.username}');
+    print("helloooo");
+    final response = await dio.get(
+      '$backendUrl/getUserDetails/${widget.username}',
+    );
     final updatedDetails = response.data['userDetails'];
 
     setState(() {
       userDetails = updatedDetails;
+      isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    String username = userDetails['username'] ?? '??username??';
-    String fullName = userDetails['fullName'] ?? 'Full Name';
-    String bio = userDetails['bio'] ?? 'Bio goes here...';
+
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    String username = userDetails['username'] ?? '';
+    String fullName = userDetails['fullName'] ?? '';
+    String bio = userDetails['bio'] ?? '';
     String profilePicture = userDetails['profilePicture'] ?? '';
-    int postsCount = (userDetails['posts'] as List?)?.length ?? 0;
-    int followersCount = (userDetails['followers'] as List?)?.length ?? 0;
-    int followingCount = (userDetails['following'] as List?)?.length ?? 0;
+    int postsCount = (userDetails['posts'] as List?)?.length ?? userDetails['postsCount'] ?? 0;
+    int followersCount = (userDetails['followers'] as List?)?.length ?? userDetails['followersCount'] ?? 0;
+    int followingCount = (userDetails['following'] as List?)?.length ?? userDetails['followingCount'] ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -51,14 +62,6 @@ class _ViewUserPageState extends State<ViewUserPage> {
         ),
         automaticallyImplyLeading: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu_rounded, size: 32),
-            onPressed: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -66,9 +69,7 @@ class _ViewUserPageState extends State<ViewUserPage> {
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -79,25 +80,20 @@ class _ViewUserPageState extends State<ViewUserPage> {
                           splashColor: Colors.transparent,
                           highlightColor: Colors.transparent,
                         ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/camera');
-                          },
-                          child: Stack(
-                            alignment: Alignment.bottomRight,
-                            children: [
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundColor: Colors.grey.shade800,
-                                backgroundImage: profilePicture.isEmpty
-                                    ? null
-                                    : NetworkImage(profilePicture),
-                                child: profilePicture.isEmpty
-                                    ? const Icon(Icons.person, size: 100)
-                                    : null,
-                              ),
-                            ],
-                          ),
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.grey.shade800,
+                              backgroundImage: profilePicture.isEmpty
+                                  ? null
+                                  : NetworkImage(profilePicture),
+                              child: profilePicture.isEmpty
+                                  ? const Icon(Icons.person, size: 100)
+                                  : null,
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 20),
@@ -121,7 +117,7 @@ class _ViewUserPageState extends State<ViewUserPage> {
                                   onTap: () {},
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '$postsCount',
@@ -135,7 +131,7 @@ class _ViewUserPageState extends State<ViewUserPage> {
                                   onTap: () {},
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '$followersCount',
@@ -149,7 +145,7 @@ class _ViewUserPageState extends State<ViewUserPage> {
                                   onTap: () {},
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         '$followingCount',
@@ -173,7 +169,7 @@ class _ViewUserPageState extends State<ViewUserPage> {
                       bio,
                       style: TextStyle(
                         fontSize: 16,
-                        color: bio == 'Bio goes here...' ? Colors.grey : Colors.white,
+                        color: Colors.white,
                       ),
                     ),
                   ),
