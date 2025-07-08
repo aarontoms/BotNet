@@ -15,6 +15,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   Map<String, dynamic> userDetails = {};
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _ProfileState extends State<Profile> {
     if (loadedDetails != null) {
       setState(() {
         userDetails = jsonDecode(loadedDetails);
+        isLoading = false;
       });
     }
   }
@@ -49,6 +51,12 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    if(isLoading){
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Padding(

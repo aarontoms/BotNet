@@ -12,6 +12,7 @@ import 'screens/settingsPage.dart';
 import 'screens/edit_profile.dart';
 import 'screens/cameraPage.dart';
 import 'screens/viewUserPage.dart';
+import 'screens/notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => Home(),
         '/search': (context) => Search(),
         '/profile': (context) => Profile(),
+        '/notifications': (context) => NotificationsScreen(),
         '/settings': (context) => SettingsPage(),
         '/edit_profile': (context) => EditProfile(),
         '/camera': (context) => CameraPage(),

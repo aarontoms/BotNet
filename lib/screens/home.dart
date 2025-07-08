@@ -18,7 +18,7 @@ class Home extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.favorite_border, size: 32,),
             onPressed: () {
-
+              Navigator.pushNamed(context, '/notifications');
             },
           ),
           SizedBox(width: 12,),
